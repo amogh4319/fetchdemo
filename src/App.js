@@ -16,7 +16,7 @@ const [movies,setMovies]=useState([]);
         releaseDate:moviesData.release_date,
         openingText:moviesData.opening_crawl
      } })
-      setMovies(transformedMovies)
+      setMovies(transformedMovies);
     }
   
 
