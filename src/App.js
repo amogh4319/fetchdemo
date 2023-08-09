@@ -2,6 +2,7 @@ import React,{useCallback, useEffect, useState} from 'react';
 import {Spinner} from 'react-bootstrap';
 import MoviesList from './components/MoviesList';
 import './App.css';
+import MoviesForm from './components/MoviesForm';
 
 function App() {
 const [movies,setMovies]=useState([]);
@@ -42,6 +43,9 @@ useEffect(()=>{
 },[fetchMoviesHandler]);
   return (
     <React.Fragment>
+      <section>
+        <MoviesForm/>
+      </section>
       <section>
         <button onClick={fetchMoviesHandler}>Fetch Movies</button>
       </section>
