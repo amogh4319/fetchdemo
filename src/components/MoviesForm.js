@@ -1,43 +1,43 @@
-import React, { useState } from 'react';
-import { Button } from 'react-bootstrap';
+import React, { useRef } from 'react';
 
+import classes from './MoviesForm.module.css';
 
-const MoviesForm=(props)=> {
-    const [title,setTitle]=useState('');
-    const [openingText,setOpeningText]=useState('');
-    const [releaseDate,setReleaseDate]=useState('');
+function AddMovie(props) {
+  const titleRef = useRef('');
+  const openingTextRef = useRef('');
+  const releaseDateRef = useRef('');
 
-    const titleHandler=(event)=>{
-        setTitle(event.target.value)
-    }
-    const openingTextHandler=(event)=>{
-        setOpeningText(event.target.value)
-    }
-    const releaseDateHandler=(event)=>{
-        setReleaseDate(event.target.value)
-    }
-    const submission=(event)=>{
-        event.preventDefault();
-        const moviesObj={
-            title:title,
-            openingText:openingText,
-            releaseDate:releaseDate
-        }
-        console.log(moviesObj);
-    }
+  function submitHandler(event) {
+    event.preventDefault();
 
+    // could add validation here...
 
-    return (
-      <div>
-        <div><label>Title</label></div>
-        <div><input type="text" onChange={titleHandler}/></div>
-        <div><label>Opening text</label></div>
-        <div><input type="text" onChange={openingTextHandler}/></div>
-        <div><label>Release Date</label></div>
-        <div><input type="text" onChange={releaseDateHandler}/></div>
-        <div><Button onClick={submission} className='mt-3'>Add Movies</Button></div>
+    const movie = {
+      title: titleRef.current.value,
+      openingText: openingTextRef.current.value,
+      releaseDate: releaseDateRef.current.value,
+    };
 
-      </div>
-    );
+    props.onAddMovie(movie);
   }
-export default MoviesForm;
+
+  return (
+    <form onSubmit={submitHandler}>
+      <div className={classes.control}>
+        <label htmlFor='title'>Title</label>
+        <input type='text' id='title' ref={titleRef} />
+      </div>
+      <div className={classes.control}>
+        <label htmlFor='opening-text'>Opening Text</label>
+        <textarea rows='5' id='opening-text' ref={openingTextRef}></textarea>
+      </div>
+      <div className={classes.control}>
+        <label htmlFor='date'>Release Date</label>
+        <input type='text' id='date' ref={releaseDateRef} />
+      </div>
+      <button>Add Movie</button>
+    </form>
+  );
+}
+
+export default AddMovie;

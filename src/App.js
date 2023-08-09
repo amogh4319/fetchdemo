@@ -15,21 +15,24 @@ const [error,setError]=useState(null);
     setIsLoading(true);
     setError(null);
     try{
-   const response=await fetch('https://swapi.dev/api/films/')
+   const response=await fetch('https://react-http-4aee6-default-rtdb.firebaseio.com/movies.json')
    
    if(!response.ok){
     throw new Error('something went wrong....Retrying!')
    }
    const data=await response.json()
    
-      const transformedMovies=data.results.map(moviesData=>{
-        return {
-        id:moviesData.episode_id,
-        title:moviesData.title,
-        releaseDate:moviesData.release_date,
-        openingText:moviesData.opening_crawl
-     } })
-      setMovies(transformedMovies);
+   const loadedMovies=[];
+   for(const key in data){
+    loadedMovies.push({
+      id:key,
+      title:data[key].title,
+      openingText:data[key].openingText,
+      releaseDate:data[key].releaseDate,
+    })
+   }
+     
+      setMovies(loadedMovies);
       
     }
   catch(error){
@@ -41,16 +44,43 @@ const [error,setError]=useState(null);
 useEffect(()=>{
   fetchMoviesHandler()
 },[fetchMoviesHandler]);
+
+async function addMovieHandler(movie) {
+  const response=await fetch('https://react-http-4aee6-default-rtdb.firebaseio.com/movies.json',{
+    method:'POST',
+    body:JSON.stringify(movie),
+    headers:{
+      'Content-Types':'application/json'
+    }
+  })
+  const data=await response.json()
+  console.log(data);
+}
+const removeHandler = async (id) => {
+  const response = await fetch(
+    `https://react-http-4aee6-default-rtdb.firebaseio.com/movies/${id}.json`,
+    {
+      method: 'DELETE',
+    }
+  );
+
+  if (!response.ok) {
+    setError('Failed to delete movie.');
+    return;
+  }
+
+  setMovies((prevMovies) => prevMovies.filter((movie) => movie.id !== id));
+};
   return (
     <React.Fragment>
       <section>
-        <MoviesForm/>
+        <MoviesForm onAddMovie={addMovieHandler}/>
       </section>
       <section>
         <button onClick={fetchMoviesHandler}>Fetch Movies</button>
       </section>
       <section>
-      {!isLoading&& movies.length>0 && <MoviesList movies={movies} />}
+      {!isLoading&& movies.length>0 && <MoviesList movies={movies} onRemove={removeHandler} />}
       {!isLoading&& movies.length===0 && !error && <p>No movies</p>}
       {!isLoading&& error && <p>{error}</p>}
       {isLoading&&  <Spinner animation="border" role="status">
